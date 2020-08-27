@@ -19,6 +19,8 @@ export const getSummary = (localLine: string, msgJSON: DeployRequest): commandSu
         return commandSummary.PUSH;
     } else if (localLine.includes('sfdx force:user:create')) {
         return commandSummary.USER_CREATE;
+    } else if (localLine.includes('sfdx force:config:set')) {        
+        return commandSummary.ORG_SET;
     } else if (localLine.includes('sfdx force:apex:execute')) {
         return commandSummary.APEX_EXEC;
     } else if (localLine.includes('sfdx force:user:permset')) {

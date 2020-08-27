@@ -129,6 +129,7 @@ interface additionalUser {
 export enum commandSummary {
     HEROKU_DEPLOY = 'deploying a heroku app',
     OPEN = 'opening org',
+    ORG_SET = 'setting config variables',
     PASSWORD_GEN = 'generating a password',
     ORG_CREATE = 'creating an org',
     PUSH = 'pushing source',

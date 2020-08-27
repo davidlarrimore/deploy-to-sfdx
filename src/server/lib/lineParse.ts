@@ -139,6 +139,7 @@ const lineParse = async (msgJSON: DeployRequest): Promise<string[]> => {
         parsedLines.unshift(
             `sfdx force:config:set defaultdevhubusername= defaultusername='${msgJSON.byoo.accessToken}' instanceUrl='${msgJSON.byoo.instanceUrl}' --json`
         );
+
     }
 
     if (!isByoo(msgJSON) && isMultiRepo(msgJSON)) {

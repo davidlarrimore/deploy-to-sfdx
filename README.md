@@ -164,9 +164,17 @@ Backend:
 `npx nodemon` will recompile all your typescript and restart the local web and worker servers.
 
 Frontend (LWC):
-`npm run client:watch` will start a server on localhost:3001. It'll rebuild and hotswap anytime you save a file.
+`npm run watch:client` will start a server on localhost:3001. It'll rebuild and hotswap anytime you save a file.
 
 Running both is good if you're working both front and backend
+
+Ensure the following is installed:
+ - [NodeJS](https://nodejs.org/en/)
+ - [Yarn](https://classic.yarnpkg.com/en/)
+ - [Shane SFDX Plugins](https://github.com/mshanemc/shane-sfdx-plugins)
+ - [SFDX CLI](https://developer.salesforce.com/tools/sfdxcli)
+ - [Heroku CLI (If using Heroku Pools)](https://devcenter.heroku.com/articles/heroku-cli)
+ - Open SSL (For Key Generation)
 
 ---
 

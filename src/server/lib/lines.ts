@@ -89,6 +89,10 @@ const lineRunner = async (msgJSON: DeployRequest, output: CDS): Promise<CDS> => 
                         output.orgId = response.result.orgId;
                         output.mainUser.username = response.result.username;
                         commandResult.shortForm = `created org ${response.result.orgId} with username ${response.result.username}`;
+                    } else if (summary === commandSummary.ORG_SET) {
+                        output.orgId = response.result.orgId;
+                        output.mainUser.username = response.result.username;
+                        commandResult.shortForm = `set org ${response.result.orgId} configuration variables`;                        
                     } else if (summary === commandSummary.PASSWORD_GEN) {
                         output.mainUser.password = response.result.password;
                         output.mainUser.permalink = loginURL(output);
