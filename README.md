@@ -12,11 +12,11 @@ Test: jest
 
 You have a dev hub, and an sfdx repo. You'd like to let people spin up scratch orgs based on the repo, and these people might not feel like using a terminal, cloning the repo, loggin in to a dev hub, and executing sfdx commands.
 
--   because they might not be developers (think admins, or even end users in a training scenario)
--   because they might not be Salesforce developers (say you built an app and give your designer/CSS person github access to "make it cool")
--   because you might have dev hub access and you don't want to give it to them
--   because you want to let people test the app quickly
--   because (like me) you're using it for workshops and demos
+    -   because they might not be developers (think admins, or even end users in a training scenario)
+    -   because they might not be Salesforce developers (say you built an app and give your designer/CSS person github access to "make it cool")
+    -   because you might have dev hub access and you don't want to give it to them
+    -   because you want to let people test the app quickly
+    -   because (like me) you're using it for workshops and demos
 
 ---
 
@@ -34,27 +34,27 @@ you can find a list of all the env vars in <https://github.com/mshanemc/deploy-t
 
 ### Required
 
--   `HUB_USERNAME` the username from your dev hub
--   `CONSUMERKEY` from your connected app
--   `REDIS_URL` starts with `redis://` (probably set up automatically when you use the heroku button)
+    -   `HUB_USERNAME` the username from your dev hub
+    -   `CONSUMERKEY` from your connected app
+    -   `REDIS_URL` starts with `redis://` (probably set up automatically when you use the heroku button)
 
 ### Plus one of the following, depending on where you're running
 
--   `JWTKEY` use only in heroku cloud. Cut/paste your server.key, including the ---- lines
--   `LOCAL_ONLY_KEY_PATH` don't use this in the cloud. Put it in your local .env file, and it needs to be an absolute path
+    -   `JWTKEY` use only in heroku cloud. Cut/paste your server.key, including the ---- lines
+    -   `LOCAL_ONLY_KEY_PATH` don't use this in the cloud. Put it in your local .env file, and it needs to be an absolute path
 
 ### strongly recommended
 
--   `HEROKU_API_KEY` can run one-off dynos, needed for org pools (see below) and lets you comine the deployer with my sfdx plugin to deploy heroku apps to a team. If you're note using org pools, be sure to delete these heroku apps. See [the plugin docs](https://github.com/mshanemc/shane-sfdx-plugins#sfdx-shaneherokurepodeploy) for how to use this
+    -   `HEROKU_API_KEY` can run one-off dynos, needed for org pools (see below) and lets you comine the deployer with my sfdx plugin to deploy heroku apps to a team. If you're note using org pools, be sure to delete these heroku apps. See [the plugin docs](https://github.com/mshanemc/shane-sfdx-plugins#sfdx-shaneherokurepodeploy) for how to use this
 
 ### optional
 
--   `UA_ID` for google analytics measurement protocol
--   `GITHUB_USERNAME_WHITELIST` lets you whitelist usernames. It's a comma-separated list. Ex: `mshanemc,andrew,bebraw`
--   `GITHUB_REPO_WHITELIST` lets you whitelist username/repo combinations. It's a comma-separated list. Ex: `mshanemc/DF17integrationWorkshops,torvalds/linux`
--   if you need to use the prerelease version of the sfdx plugin, then set `SFDX_PRERELEASE` to true.
--   org pools -- see below for details
--   BYOO (bring your own org) -- see below for details
+    -   `UA_ID` for google analytics measurement protocol
+    -   `GITHUB_USERNAME_WHITELIST` lets you whitelist usernames. It's a comma-separated list. Ex: `mshanemc,andrew,bebraw`
+    -   `GITHUB_REPO_WHITELIST` lets you whitelist username/repo combinations. It's a comma-separated list. Ex: `mshanemc/DF17integrationWorkshops,torvalds/linux`
+    -   if you need to use the prerelease version of the sfdx plugin, then set `SFDX_PRERELEASE` to true.
+    -   org pools -- see below for details
+    -   BYOO (bring your own org) -- see below for details
 
 What's whitelisting do? Normally, this app will parse your orgInit.sh and throw an error if you're doing any funny business. BUT if you're on the whitelist, the app owner trusts you and you can do things with bash metacharacters (think &&, |, >) and execute non-sfdx commands (grep, rm, whatever!) etc. BE CAREFUL!
 
@@ -89,10 +89,10 @@ The server redirects the user to a web page which polls an http endpoint (/resul
 When a process starts up, it auths to a devhub via its environment variables.
 Then it listens to the deploy queue and executes jobs
 
--   clone the repo into local filestorage
--   execute the orgInit.sh script, or the default create/push/open flow if there isn't one
--   drop the output results into a redis key (the deployId) so that the results endpoint can find it
--   delete the local folder and send the ALLDONE message
+    -   clone the repo into local filestorage
+    -   execute the orgInit.sh script, or the default create/push/open flow if there isn't one
+    -   drop the output results into a redis key (the deployId) so that the results endpoint can find it
+    -   delete the local folder and send the ALLDONE message
 
 It runs a plugin that give it powers SFDX doesn't out-of-the-box
 <https://github.com/mshanemc/shane-sfdx-plugins> along with `sfdx-migration-automatic` and `@salesforce/analytics`
@@ -121,8 +121,8 @@ Org Pools are the answer. You tell it which username/repo pairs, and how many or
 
 There's 3 worker dynos, both off by default (leave them that way).
 
--   If you want pools, use Heroku Scheduler to run the `poolwatcher` task up to every 10 minutes (as a one-off dyno). If any pool orgs need to be created, it'll start up one-off dynoes to handle that
--   run poolskimmer with Heroku Scheduler every hour or so--it'll check for expired orgs to help keep you within your limits.
+    -   If you want pools, use Heroku Scheduler to run the `poolwatcher` task up to every 10 minutes (as a one-off dyno). If any pool orgs need to be created, it'll start up one-off dynoes to handle that
+    -   run poolskimmer with Heroku Scheduler every hour or so--it'll check for expired orgs to help keep you within your limits.
 
 Then, in your .env/heroku config vars, point the deployer to some url that returns json.
 `POOLCONFIG_URL` = `https://where.yourstuff/is`.
@@ -132,17 +132,17 @@ Finally, since poolwatcher is starting dynos to handle this pool stuff, you want
 Example code here, but feel free to generate it however you like.
 <https://github.com/mshanemc/poolsConfig>
 
-```json
-[
-    {
-        "user": "mshanemc", //ex: lives at https://github.com/mshanemc/cg1
-        "repo": "cg1",
-        "quantity": 4, //how many of this org to keep handy
-        "lifeHours": 12 //how long it should live, in hours
-    }
-    // ... use 1 for each repo
-]
-```
+    ```json
+    [
+        {
+            "user": "mshanemc", //ex: lives at https://github.com/mshanemc/cg1
+            "repo": "cg1",
+            "quantity": 4, //how many of this org to keep handy
+            "lifeHours": 12 //how long it should live, in hours
+        }
+        // ... use 1 for each repo
+    ]
+    ```
 
 `pooldeployer` should have 0 dynos running. It runs as a one-off dyno called by **poolwatcher**
 
@@ -152,11 +152,11 @@ Example code here, but feel free to generate it however you like.
 
 in your `.env` add
 
--   `LOCAL_ONLY_KEY_PATH=/Users/shane.mclaughlin/code/certificates/server.key` or your equivalent to where your cert for jwt is
--   in your `process.env` file, put the Heroku Redis url (it can be the same as you're using in the cloud. **Don't commit this file to your repo.**
--   `npm install` will get all your modules installed, including my plugin.
--   `npm run build` will get the typescript and LWC output from /src to /built, which is where the executables go.
--   then start this app with `npm run local:web` and use localhost:8443
+    -   `LOCAL_ONLY_KEY_PATH=/Users/shane.mclaughlin/code/certificates/server.key` or your equivalent to where your cert for jwt is
+    -   in your `process.env` file, put the Heroku Redis url (it can be the same as you're using in the cloud. **Don't commit this file to your repo.**
+    -   `yarn install` will get all your modules installed, including my plugin.
+    -   `npm run build` will get the typescript and LWC output from /src to /built, which is where the executables go.
+    -   then start this app with `npm run local:web` and use localhost:8443
 
 ## Building for Local Dev
 
@@ -169,12 +169,13 @@ Frontend (LWC):
 Running both is good if you're working both front and backend
 
 Ensure the following is installed:
- - [NodeJS](https://nodejs.org/en/)
- - [Yarn](https://classic.yarnpkg.com/en/)
- - [Shane SFDX Plugins](https://github.com/mshanemc/shane-sfdx-plugins)
- - [SFDX CLI](https://developer.salesforce.com/tools/sfdxcli)
- - [Heroku CLI (If using Heroku Pools)](https://devcenter.heroku.com/articles/heroku-cli)
- - Open SSL (For Key Generation)
+
+    - [NodeJS](https://nodejs.org/en/)
+    - [Yarn](https://classic.yarnpkg.com/en/)
+    - [Shane SFDX Plugins](https://github.com/mshanemc/shane-sfdx-plugins)
+    - [SFDX CLI](https://developer.salesforce.com/tools/sfdxcli)
+    - [Heroku CLI (If using Heroku Pools)](https://devcenter.heroku.com/articles/heroku-cli)
+    - Open SSL (For Key Generation)
 
 ---
 
@@ -208,9 +209,9 @@ There's a file called `testRepos` that you'll want to customize with any repos y
 
 Run them with `npm run test:unit`. A few of them are not true unit tests...the require a server and redis running, and will try to connect to github for your testRepos. Run each of these commands in a separate terminal.
 
-```shell
-npm run local:web
-```
+    ```shell
+    npm run local:web
+    ```
 
 Integration (tests/integrationTests) are slower/harder.
 
@@ -230,8 +231,8 @@ NOTE: This is using up your scratch org quotas. The tests delete the orgs, so it
 
 I'm using typescript...
 
--   `npm install` will get all your modules installed, including my plugins.
--   `npm build` will get any typescript changes from /src to /built, which is where the executables go.
+    -   `npm install` will get all your modules installed, including my plugins.
+    -   `npm build` will get any typescript changes from /src to /built, which is where the executables go.
 
 Finally, the front end app is Lightning Web Components. You'll figure it out...if not, start here: [https://lwc.dev/](https://lwc.dev/)
 
