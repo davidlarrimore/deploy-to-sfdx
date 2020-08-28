@@ -54,3 +54,5 @@ dist
 
 # specialized tests
 test/integrationTests/generatedRepos
+env
+process.env
