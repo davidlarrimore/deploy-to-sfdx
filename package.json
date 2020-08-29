@@ -57,7 +57,7 @@
         "moment": "^2.24.0",
         "request-promise-native": "^1.0.7",
         "salesforce-jwt-bearer-token-flow": "^0.2.4",
-        "shane-sfdx-plugins": "^4.38.7",
+        "shane-sfdx-plugins": "^4.39.2",
         "strip-color": "^0.1.0",
         "universal-analytics": "^0.4.20"
     },
@@ -96,7 +96,7 @@
         "nodemon": "^2.0.2",
         "npm-run-all": "^4.1.5",
         "prettier": "2.0.5",
-        "puppeteer": "^2.0.0",
+        "puppeteer": "^5.2.1",
         "ts-jest": "^26.0.3",
         "ts-node": "^8.0.3",
         "typescript": "^3.8.3"
