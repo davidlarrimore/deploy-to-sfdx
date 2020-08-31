@@ -2543,10 +2543,10 @@
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.1.0.tgz#5f96562c1075ee715a5b138f0b7f591c1f40f6b8"
   integrity sha512-hiYA88aHiEIgDmeKlsyVsuQdcFn3Z2VuFd/Xm/HCnGnPD8UFU5BM128uzzRVVGEzKDKYUrRsRH9S2o+NUy/3IA==
 
-"@types/puppeteer@^2.0.0":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@types/puppeteer/-/puppeteer-2.1.1.tgz#dfbec9de3db4328ec9b66ab2cbb1875033bc22f6"
-  integrity sha512-FqPZvUtnpTGrqbHvPUn76pvVcBPEVEqZftrdOjr6YRkaaxkjKQ8dQLNaQBjER7Lvd1Q6+0R0XR+N3tYGWBSzNw==
+"@types/puppeteer@^2.1.2":
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/@types/puppeteer/-/puppeteer-2.1.2.tgz#75b870c7f8fe4bdf76c3bb30c997c3904611d839"
+  integrity sha512-rNPCKZ+PuHR11au5Qu36TK63i9ppcdvREyEUd45jGc9Yj4AsoLpiCm22ebwDDRSzNc1N2+XOmaa5i6ZSW8FOMQ==
   dependencies:
     "@types/node" "*"
 
