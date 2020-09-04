@@ -42,7 +42,6 @@ export interface TagFile {
     name: string; 
     installDateTime?: Date;
     githubBranch?: string;
-    branch?: string;
     githubRepositoryUrl?: string;
     installType?: string;
     commitHash?: Date;
