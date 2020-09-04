@@ -1,4 +1,4 @@
-import { LightningElement, api, track } from 'lwc';
+import { LightningElement, api, track, wire } from 'lwc';
 import { multiTemplateURLBuilder } from '../../../../server/lib/multiTemplateURLBuilder';
 
 export default class Byoo extends LightningElement {
@@ -15,6 +15,15 @@ export default class Byoo extends LightningElement {
     // console.log(authURL);
     this.regularURL = await (await fetch(authURL)).text();
     this.sandboxURL = await (await fetch(`${authURL}&base_url=https://test.salesforce.com`)).text();
+  }
+
+  get getParameter() {
+    // if you have Dynamic URL Use (window.location.href)
+    var testURL = window.location.href;
+    var newURL = new URL(testURL).searchParams;
+    console.log('Template ===> '+newURL.get('template'));
+    //console.log('image ====> '+newURL.get('image'));
+    return newURL.get('template');
   }
 
   get templateArray() {

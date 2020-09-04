@@ -35,7 +35,20 @@ export interface DeployRequestRepo {
     repo: string;
     branch?: string;
     whitelisted?: boolean;
+    tagFile?: TagFile;
 }
+
+export interface TagFile {
+    name: string; 
+    installDateTime?: Date;
+    githubBranch?: string;
+    branch?: string;
+    githubRepositoryUrl?: string;
+    installType?: string;
+    commitHash?: Date;
+    commitTagName?: string;
+}
+
 
 // tells how a pool should be built.  Used in an array from a url like POOLCONFIG_URL=https://deployer-pools.herokuapp.com/pools-dev
 export interface PoolConfig {

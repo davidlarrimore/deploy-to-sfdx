@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-use-before-define */
 import * as crypto from 'crypto';
+
 import request from 'request-promise-native';
 
 import { PoolConfig, ProjectJSON, DeployRequest, DeployRequestRepo, PoolConfigDeprecated } from './types';
@@ -38,9 +39,7 @@ const getDeployId = (username: string, repo: string): string =>
 const getCloneCommands = (depReq: DeployRequest): string[] => {
     if (depReq.repos.length === 1) {
         return [
-            `git clone -b ${depReq.repos[0].branch ?? 'master'} --single-branch https://github.com/${depReq.repos[0].username}/${
-                depReq.repos[0].repo
-            }.git ${depReq.deployId}`
+            `git clone -b ${depReq.repos[0].branch ?? 'master'} --single-branch https://github.com/${depReq.repos[0].username}/${depReq.repos[0].repo}.git ${depReq.deployId}`
         ];
     }
     return depReq.repos.map(
@@ -50,6 +49,31 @@ const getCloneCommands = (depReq: DeployRequest): string[] => {
             }`
     );
 };
+
+const getaddDeployTagCommands = (depReq: DeployRequest): string[] => {
+
+    if (depReq.repos.length === 1) {
+        const tagFiledirectory = `${depReq.deployId}/force-app/main/default/staticresources`;
+        const tagFilePrefix = 'XTAG';
+        const tagFileName = `${tagFilePrefix}_${depReq.repos[0].username}_${depReq.repos[0].repo}.json`;
+        const tagFileMetaName = `${tagFilePrefix}_${depReq.repos[0].username}_${depReq.repos[0].repo}.resource-meta.xml`;
+
+        return [
+            `mkdir -p ${tagFiledirectory}`,
+            `echo '${JSON.stringify(depReq.repos[0].tagFile)}' > ${tagFiledirectory}/${tagFileName}`,
+            `echo '<?xml version="1.0" encoding="UTF-8"?><StaticResource xmlns="http://soap.sforce.com/2006/04/metadata"><cacheControl>Public</cacheControl><contentType>application/json</contentType></StaticResource>' > ${tagFiledirectory}/${tagFileMetaName}`
+        ];
+    }
+    
+    //TODO FIX this
+    //return depReq.repos.map(
+    //    (repo) => `git clone -b ${repo.branch ?? 'master'} --single-branch https://github.com/${repo.username}/${repo.repo}.git ${depReq.deployId}/${repo.repo}`
+    //);
+
+    return null;
+
+};
+
 
 const isMultiRepo = (depReq: DeployRequest): boolean => {
     if (!depReq.repos) {
@@ -145,5 +169,6 @@ export {
     getArg,
     getPoolKey,
     getPoolConfig,
-    getKeyFromRepos
+    getKeyFromRepos,
+    getaddDeployTagCommands
 };

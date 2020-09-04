@@ -1,15 +1,16 @@
 // serves as a shared build path for pool and non-pool orgs
 import fs from 'fs-extra';
 import logger from 'heroku-logger';
+//import querystring from 'querystring';
 
-import { DeployRequest } from './types';
+import { DeployRequest} from './types';
 import { cdsPublish, putHerokuCDS } from './redisNormal';
 import { lineRunner } from './lines';
 import { timesToGA } from './timeTracking';
 // import { poolParse } from './poolParse';
 import { getCloneCommands, isByoo } from './namedUtilities';
 import { CDS } from './CDS';
-import { prepOrgInit, prepProjectScratchDef, prepareRepo } from './prepLocalRepo';
+import { prepOrgInit, prepProjectScratchDef, prepareRepo, addInstallTag } from './prepLocalRepo';
 
 const build = async (msgJSON: DeployRequest): Promise<CDS> => {
     let clientResult = new CDS({
@@ -31,6 +32,13 @@ const build = async (msgJSON: DeployRequest): Promise<CDS> => {
         return clientResult;
     }
 
+    // clone the repo
+    clientResult = await addInstallTag(msgJSON, clientResult);
+    await cdsPublish(clientResult);
+    if (clientResult.errors.length > 0) {
+        return clientResult;
+    }
+    
     // figure out the org init file and optionally set the email
     await Promise.all([prepOrgInit(msgJSON), prepProjectScratchDef(msgJSON)]);
     try {
@@ -44,5 +52,8 @@ const build = async (msgJSON: DeployRequest): Promise<CDS> => {
 
     return clientResult;
 };
+
+
+
 
 export { build };
