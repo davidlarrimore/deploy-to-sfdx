@@ -62,7 +62,12 @@ const prepareRepo = async (msgJSON: DeployRequest, cds: CDS): Promise<CDS> => {
      logger.debug('Commit Sha:  ' + githubCommitsData.sha);
      logger.debug('Commit Date:  ' + githubCommitsData.commit.committer.date);
 
-     msgJSON.repos[0].tagFile = {'name': msgJSON.repos[0].repo, 'githubBranch': msgJSON.repos[0].branch, 'githubRepositoryUrl': `https://github.com/${msgJSON.repos[0].username}/${msgJSON.repos[0].repo}`, 'installType':'Github Commit', 'installDateTime': new Date(), 'commitHash':githubCommitsData.sha};
+     const now = new Date();
+     const newDate = new Date(now.toISOString().split('.')[0]+'Z');
+     //alert( now.toISOString().slice(0,-5)+"Z");
+
+
+     msgJSON.repos[0].tagFile = {'name': msgJSON.repos[0].repo, 'githubBranch': msgJSON.repos[0].branch, 'githubRepositoryUrl': `https://github.com/${msgJSON.repos[0].username}/${msgJSON.repos[0].repo}`, 'installType':'Github Commit', 'installDateTime': newDate, 'commitHash':githubCommitsData.sha};
 
      const getaAdDeployTagCmds = getaddDeployTagCommands(msgJSON);
      logger.warn(`Running addDeployTag.addInstallTag`);

@@ -55,8 +55,10 @@ const getaddDeployTagCommands = (depReq: DeployRequest): string[] => {
     if (depReq.repos.length === 1) {
         const tagFiledirectory = `${depReq.deployId}/force-app/main/default/staticresources`;
         const tagFilePrefix = 'XTAG';
-        const tagFileName = `${tagFilePrefix}_${depReq.repos[0].username}_${depReq.repos[0].repo}.json`;
-        const tagFileMetaName = `${tagFilePrefix}_${depReq.repos[0].username}_${depReq.repos[0].repo}.resource-meta.xml`;
+        let repoName = depReq.repos[0].repo;
+        repoName = repoName.replace(/-/g,'');
+        const tagFileName = `${tagFilePrefix}_${depReq.repos[0].username}_${repoName}.json`;
+        const tagFileMetaName = `${tagFilePrefix}_${depReq.repos[0].username}_${repoName}.resource-meta.xml`;
 
         return [
             `mkdir -p ${tagFiledirectory}`,
