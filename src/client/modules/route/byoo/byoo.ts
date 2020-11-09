@@ -20,8 +20,8 @@ export default class Byoo extends LightningElement {
     let thisURL = window.location.href;
     let parameterArray = new URL(thisURL).searchParams;
     
-    if(undefined !== parameterArray.get('quickdeploy')){
-      if(undefined !== parameterArray.get('sandbox')){
+    if(null !== parameterArray.get('quickdeploy')){
+      if(null !== parameterArray.get('sandbox')){
         window.location.href = this.sandboxURL;
       }else{
         window.location.href = this.regularURL;
