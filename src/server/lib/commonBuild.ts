@@ -7,7 +7,7 @@ import { cdsPublish, putHerokuCDS } from './redisNormal';
 import { lineRunner } from './lines';
 import { timesToGA } from './timeTracking';
 // import { poolParse } from './poolParse';
-import { getCloneCommands, isByoo, isQuickDeploy } from './namedUtilities';
+import { getCloneCommands, isByoo, isQuickDeploy, getaddDeployTagCommands } from './namedUtilities';
 import { CDS } from './CDS';
 import { prepOrgInit, prepProjectScratchDef, prepareRepo } from './prepLocalRepo';
 
@@ -32,6 +32,15 @@ const build = async (msgJSON: DeployRequest): Promise<CDS> => {
         return clientResult;
     }
 
+    // Added for QuickDeploy...Adds InstallTag
+    if (isQuickDeploy){
+        clientResult = await addInstallTag(msgJSON, clientResult);
+        await cdsPublish(clientResult);
+        if (clientResult.errors.length > 0) {
+            return clientResult;
+        }  
+    }
+  
     // figure out the org init file and optionally set the email
     await Promise.all([prepOrgInit(msgJSON), prepProjectScratchDef(msgJSON)]);
     try {

@@ -172,4 +172,4 @@ const prepProjectScratchDef = async (msgJSON: DeployRequest): Promise<void> => {
     }
 };
 
-export { prepOrgInit, prepProjectScratchDef, prepareRepo };
+export { prepOrgInit, prepProjectScratchDef, prepareRepo, addInstallTag };
