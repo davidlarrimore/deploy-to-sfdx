@@ -7,7 +7,7 @@ import { cdsPublish, putHerokuCDS } from './redisNormal';
 import { lineRunner } from './lines';
 import { timesToGA } from './timeTracking';
 // import { poolParse } from './poolParse';
-import { getCloneCommands, isByoo, isQuickDeploy, getaddDeployTagCommands } from './namedUtilities';
+import { getCloneCommands, isByoo, isQuickDeploy, addInstallTag } from './namedUtilities';
 import { CDS } from './CDS';
 import { prepOrgInit, prepProjectScratchDef, prepareRepo } from './prepLocalRepo';
 
