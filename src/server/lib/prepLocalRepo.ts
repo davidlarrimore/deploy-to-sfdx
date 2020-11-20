@@ -7,6 +7,7 @@ import { CDS } from './CDS';
 import { execProm } from './execProm';
 import { buildScratchDef } from './multirepo/buildScratchDefs';
 import { MergeProjectJSONs } from './multirepo/mergeProjectJSONs';
+import axios from 'axios';
 
 const scratchDefFileName = 'project-scratch-def.json';
 const projectDefFileName = 'sfdx-project.json';
