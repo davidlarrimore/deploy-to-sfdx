@@ -6,7 +6,7 @@ import * as fs from 'fs-extra';
 import { shellSanitize } from './shellSanitize';
 import { argStripper } from './argStripper';
 import { DeployRequest } from './types';
-import { isMultiRepo, isByoo, getPackageDirsFromFile, getArg } from './namedUtilities';
+import { isMultiRepo, isByoo, isQuickDeploy, getPackageDirsFromFile, getArg } from './namedUtilities';
 import { filesToLines } from './fileToLines';
 
 const jsonify = (line: string): string => {
@@ -19,6 +19,16 @@ const jsonify = (line: string): string => {
 };
 
 const byooFilter = (line: string): boolean => {
+    if (line.includes('org:create')) {
+        return false;
+    }
+    if (line.includes('user:password')) {
+        return false;
+    }
+    return true;
+};
+
+const quickDeployFilter = (line: string): boolean => {
     if (line.includes('org:create')) {
         return false;
     }
@@ -131,6 +141,7 @@ const lineParse = async (msgJSON: DeployRequest): Promise<string[]> => {
             msgJSON.repos.every((repo) => repo.whitelisted) ? line : securityAssertions(line)
         )
         .filter((line) => !isByoo(msgJSON) || byooFilter(line)) // let through if !byoo, and filter out create/password commands
+        .filter((line) => !isQuickDeploy(msgJSON) || quickDeployFilter(line)) // let through if !quickDeploy, and filter out create/password commands
         .map((line) => lineCorrections(line, msgJSON))
         .map((line) => jsonify(line));
 
@@ -140,6 +151,13 @@ const lineParse = async (msgJSON: DeployRequest): Promise<string[]> => {
             `sfdx force:config:set defaultdevhubusername= defaultusername='${msgJSON.byoo.accessToken}' instanceUrl='${msgJSON.byoo.instanceUrl}' --json`
         );
     }
+
+    if (isQuickDeploy(msgJSON)) {
+        // special auth scenario for byoo user
+        parsedLines.unshift(
+            `sfdx force:config:set defaultdevhubusername= defaultusername='${msgJSON.byoo.accessToken}' instanceUrl='${msgJSON.byoo.instanceUrl}' --json`
+        );
+    }   
 
     if (!isByoo(msgJSON) && isMultiRepo(msgJSON)) {
         // remove all the creates and put it at the beginning
@@ -151,6 +169,16 @@ const lineParse = async (msgJSON: DeployRequest): Promise<string[]> => {
         ];
     }
 
+    if (!isQuickDeploy(msgJSON) && isMultiRepo(msgJSON)) {
+        // remove all the creates and put it at the beginning
+        parsedLines = [
+            `sfdx force:org:create -f config/project-scratch-def.json -d ${getMaxDays(
+                parsedLines
+            )} -s --json`,
+            ...parsedLines.filter((line) => !line.includes('org:create'))
+        ];
+    }   
+
     if (isMultiRepo(msgJSON)) {
         parsedLines = multiOrgCorrections(parsedLines);
     }
@@ -158,4 +186,4 @@ const lineParse = async (msgJSON: DeployRequest): Promise<string[]> => {
     return parsedLines;
 };
 
-export { lineParse, jsonify, securityAssertions, byooFilter, getMaxDays, multiOrgCorrections };
+export { lineParse, jsonify, securityAssertions, byooFilter, quickDeployFilter, getMaxDays, multiOrgCorrections };

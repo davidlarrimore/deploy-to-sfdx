@@ -60,6 +60,7 @@ const isMultiRepo = (depReq: DeployRequest): boolean => {
 };
 
 const isByoo = (depReq: DeployRequest): boolean => !!depReq.byoo;
+const isQuickDeploy = (depReq: DeployRequest): boolean => !!depReq.quickDeploy;
 
 const getArg = (cmd: string, parameter: string): string => {
     cmd = cmd.concat(' ');
@@ -142,6 +143,7 @@ export {
     getCloneCommands,
     isMultiRepo,
     isByoo,
+    isQuickDeploy,
     getArg,
     getPoolKey,
     getPoolConfig,

@@ -91,11 +91,21 @@ app.get(
     })
 );
 
-app.get(['/', '/error', '/deploying/:format/:deployId', '/userinfo', '/byoo', '/testform', '/deleteConfirm'], (req, res, next) => {
+app.get(['/', '/error', '/deploying/:format/:deployId', '/userinfo', '/byoo', '/quickDeploy', '/testform', '/deleteConfirm'], (req, res, next) => {
     res.sendFile('index.html', { root: path.join(__dirname, '../../../dist') });
 });
 
 app.get(['/byoo'], (req, res, next) => {
+    if (processWrapper.BYOO_CALLBACK_URI && processWrapper.BYOO_CONSUMERKEY && processWrapper.BYOO_SECRET) {
+        res.sendFile('index.html', { root: path.join(__dirname, '../../../dist') });
+    } else {
+        setImmediate(() => {
+            next(new Error('Connected app credentials not properly configured for Bring Your Own Org feature'));
+        });
+    }
+});
+
+app.get(['/quickDeploy'], (req, res, next) => {
     if (processWrapper.BYOO_CALLBACK_URI && processWrapper.BYOO_CONSUMERKEY && processWrapper.BYOO_SECRET) {
         res.sendFile('index.html', { root: path.join(__dirname, '../../../dist') });
     } else {

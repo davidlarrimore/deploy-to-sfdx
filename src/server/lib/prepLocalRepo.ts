@@ -2,7 +2,7 @@
 import * as fs from 'fs-extra';
 import logger from 'heroku-logger';
 import { DeployRequest } from './types';
-import { getCloneCommands, isMultiRepo, isByoo } from './namedUtilities';
+import { getCloneCommands, isMultiRepo, isByoo, isQuickDeploy } from './namedUtilities';
 import { CDS } from './CDS';
 import { execProm } from './execProm';
 import { buildScratchDef } from './multirepo/buildScratchDefs';
@@ -61,7 +61,13 @@ const prepOrgInit = async (msgJSON: DeployRequest): Promise<void> => {
             // so copy that file into the default location
             logger.debug(`found byoo file.  Replacing ${path}`);
             await fs.copyFile(path.replace('orgInit', 'byooInit'), path);
+        } else if (isQuickDeploy(msgJSON) && fs.existsSync(path.replace('orgInit', 'byooInit'))) {
+            // it's quickDeploy and you have a special quickDeploy init file that supercedes the normal orgInit.sh
+            // so copy that file into the default location
+            logger.debug(`found quickDeploy file.  Replacing ${path}`);
+            await fs.copyFile(path.replace('orgInit', 'byooInit'), path);
         }
+
         if (!fs.existsSync(path)) {
             // there is no init file, so we'll create a default one
             logger.debug(`deployQueueCheck: no orgInit.sh for ${path}.  Will use default`);

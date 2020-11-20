@@ -3,7 +3,7 @@ import logger from 'heroku-logger';
 
 import { DeployRequest, SfdxDisplayResult } from './types';
 import { utilities } from './utilities';
-import { getArg, isByoo } from './namedUtilities';
+import { getArg, isByoo, isQuickDeploy} from './namedUtilities';
 import { lineParse } from './lineParse';
 import { cdsPublish, deleteOrg } from './redisNormal';
 import { exec, exec2JSON, exec2String } from './execProm';
@@ -19,7 +19,16 @@ const lineRunner = async (msgJSON: DeployRequest, output: CDS): Promise<CDS> => 
     let lines;
     try {
         lines = await lineParse(msgJSON);
-        output.lineCount = isByoo(msgJSON) ? lines.length + 2 : lines.length + 1;
+
+        if (isByoo(msgJSON)){
+            output.lineCount = lines.length + 2;
+        } else if (isQuickDeploy(msgJSON)){
+            //Including additonal lines for XTAG File Insert
+            output.lineCount = lines.length + 4;
+        } else {
+            output.lineCount = lines.length + 1;
+        }
+
         await cdsPublish(output); //1 extra to account for the git clone command
     } catch (e) {
         output = outputAddError(
@@ -169,6 +178,15 @@ const lineRunner = async (msgJSON: DeployRequest, output: CDS): Promise<CDS> => 
             expirationDate: displayResults.expirationDate
         };
         await Promise.all([cdsPublish(output), exec('sfdx force:auth:logout -p', { cwd: `tmp/${msgJSON.deployId}` })]);
+    } else if (!isQuickDeploy(msgJSON)) {
+            const displayResults = await getDisplayResults(`tmp/${msgJSON.deployId}`, output.mainUser.username);
+            output = {
+                ...output,
+                instanceUrl: displayResults.instanceUrl,
+                expirationDate: displayResults.expirationDate
+            };
+            await Promise.all([cdsPublish(output), exec('sfdx force:auth:logout -p', { cwd: `tmp/${msgJSON.deployId}` })]);
+            
     } else {
         // logging out of byoo orgs doesn't exist
         await cdsPublish(output);

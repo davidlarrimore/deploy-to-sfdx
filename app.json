@@ -34,6 +34,7 @@
         "web": { "quantity": 1, "size": "free" },
         "orgbuilder": { "quantity": 1, "size": "free" },
         "pooldeployer": { "quantity": 0, "size": "free" },
+        "poolQuickDeploy": { "quantity": 0, "size": "free" },        
         "poolwatcher": { "quantity": 0, "size": "free" },
         "oneoffbuilder": { "quantity": 0, "size": "free" },
         "poolskimmer": { "quantity": 0, "size": "free" },

@@ -3,7 +3,7 @@ import logger from 'heroku-logger';
 import { getDeployRequest } from './redisNormal';
 import { pooledOrgFinder } from './pooledOrgFinder';
 import { build } from './commonBuild';
-import { isByoo, getPoolKey } from './namedUtilities';
+import { isByoo, isQuickDeploy, getPoolKey } from './namedUtilities';
 
 import { DeployRequest } from './types';
 
@@ -31,6 +31,13 @@ const check = async (): Promise<boolean> => {
     } else {
         await build(msgJSON);
     }
+
+    // don't use org pools for quickDeploy
+    if (!isQuickDeploy(msgJSON) && (await pooledOrgFinder(msgJSON))) {
+        logger.debug('deployQueueCheck: using a pooled org');
+    } else {
+        await build(msgJSON);
+    }    
 
     return true;
 };

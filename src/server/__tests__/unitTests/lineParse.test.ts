@@ -6,6 +6,7 @@ import {
     securityAssertions,
     jsonify,
     byooFilter,
+    quickDeployFilter,
     getMaxDays,
     multiOrgCorrections
 } from '../../lib/lineParse';
@@ -232,6 +233,23 @@ describe('byooFilter', () => {
     test('true for anything else', () => {
         const line = 'hello, world';
         expect(byooFilter(line)).toBe(true);
+    });
+});
+
+describe('quickDeployFilter', () => {
+    // const harmlessCommandWithJson = `${harmlessCommand} --json`;
+
+    test('false for org:create', () => {
+        const line = 'sfdx force:org:create -f config';
+        expect(quickDeployFilter(line)).toBe(false);
+    });
+    test('false for user:password', () => {
+        const line = 'sfdx force:user:password';
+        expect(quickDeployFilter(line)).toBe(false);
+    });
+    test('true for anything else', () => {
+        const line = 'hello, world';
+        expect(quickDeployFilter(line)).toBe(true);
     });
 });
 

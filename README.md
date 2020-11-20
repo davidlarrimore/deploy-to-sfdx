@@ -182,7 +182,7 @@ Backend:
 `npx nodemon` will recompile all your typescript and restart the local web and worker servers.
 
 Frontend (LWC):
-`yarn watch:clien` will start a server on localhost:3001. It'll rebuild and hotswap anytime you save a file.
+`yarn watch:client` will start a server on localhost:3001. It'll rebuild and hotswap anytime you save a file.
 
 Running both is good if you're working both front and backend
 

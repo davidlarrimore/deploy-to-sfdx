@@ -7,7 +7,7 @@ import { cdsPublish, putHerokuCDS } from './redisNormal';
 import { lineRunner } from './lines';
 import { timesToGA } from './timeTracking';
 // import { poolParse } from './poolParse';
-import { getCloneCommands, isByoo } from './namedUtilities';
+import { getCloneCommands, isByoo, isQuickDeploy } from './namedUtilities';
 import { CDS } from './CDS';
 import { prepOrgInit, prepProjectScratchDef, prepareRepo } from './prepLocalRepo';
 
@@ -18,7 +18,8 @@ const build = async (msgJSON: DeployRequest): Promise<CDS> => {
         currentCommand: getCloneCommands(msgJSON)[0],
         isPool: msgJSON.pool,
         // isByoo: msgJSON.byoo && typeof msgJSON.byoo.accessToken === 'string'
-        isByoo: isByoo(msgJSON)
+        isByoo: isByoo(msgJSON),
+        isQuickDeploy: isQuickDeploy(msgJSON)
     });
 
     // get something to redis as soon as possible

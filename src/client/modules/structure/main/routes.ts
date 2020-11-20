@@ -5,6 +5,7 @@ import TrialLoader from '../../route/trialLoader/trialLoader';
 import Deleted from '../../route/deleted/deleted';
 import UserInfo from '../../route/userInfo/userInfo';
 import Byoo from '../../route/byoo/byoo';
+import QuickDeploy from '../../route/quickDeploy/quickDeploy';
 import TestForm from '../../route/testForm/testForm';
 
 const routeTable = [
@@ -65,6 +66,11 @@ const routeTable = [
     component: Byoo,
     queryMap: [{ query: 'template', prop: 'template' }],
   },
+  {
+    name: 'quickDeploy',
+    component: QuickDeploy,
+    queryMap: [{ query: 'template', prop: 'template' }],
+  },  
 ];
 
 export { routeTable };

@@ -26,6 +26,12 @@ export interface DeployRequest {
         username: string;
         orgId: string;
     };
+    quickDeploy?: {
+        accessToken: string;
+        instanceUrl: string;
+        username: string;
+        orgId: string;
+    };   
     repos?: DeployRequestRepo[]; // new version to hold multiples, support more sources
 }
 

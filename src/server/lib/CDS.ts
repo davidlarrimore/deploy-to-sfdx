@@ -29,6 +29,7 @@ class CDS {
     poolLines?: LineParserResult;
     isPool: boolean;
     isByoo: boolean;
+    isQuickDeploy: boolean;
 
     constructor(options: CDSOptions) {
         this.deployId = options.deployId;
@@ -57,6 +58,7 @@ class CDS {
         this.poolLines = options.poolLines;
         this.isPool = options.isPool || false;
         this.isByoo = options.isByoo || false;
+        this.isQuickDeploy = options.isQuickDeploy || false;
     }
 }
 
@@ -94,6 +96,7 @@ export interface CDSOptions {
     poolLines?: LineParserResult;
     isPool?: boolean;
     isByoo?: boolean;
+    isQuickDeploy?: boolean;
 }
 
 interface MainUser {
