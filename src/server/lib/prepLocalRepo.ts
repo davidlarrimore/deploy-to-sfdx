@@ -2,7 +2,7 @@
 import * as fs from 'fs-extra';
 import logger from 'heroku-logger';
 import { DeployRequest } from './types';
-import { getCloneCommands, isMultiRepo, isByoo, isQuickDeploy } from './namedUtilities';
+import { getCloneCommands, isMultiRepo, isByoo, isQuickDeploy, getaddDeployTagCommands } from './namedUtilities';
 import { CDS } from './CDS';
 import { execProm } from './execProm';
 import { buildScratchDef } from './multirepo/buildScratchDefs';
@@ -44,6 +44,56 @@ const prepareRepo = async (msgJSON: DeployRequest, cds: CDS): Promise<CDS> => {
     }
     return cds;
 };
+
+const addInstallTag = async (msgJSON: DeployRequest, cds: CDS): Promise<CDS> => {
+    if (isMultiRepo(msgJSON)) {
+        // we have to create a parent project for multi-repo deploys
+        await execProm(`sfdx force:project:create -n ${msgJSON.deployId}`, { cwd: 'tmp' });
+    }
+
+ //TODO: Use URL parameters to install by Tag vs Latest Commit
+ const githubUrl = `https://api.github.com/repos/${msgJSON.repos[0].username}/${msgJSON.repos[0].repo}/commits/master`;
+
+ logger.debug('Github API URL: ' + githubUrl);
+ const response = await axios.get(githubUrl);
+ const githubCommitsData = response.data;
+ logger.debug('githubCommitsData:');
+
+ logger.debug('Commit Sha:  ' + githubCommitsData.sha);
+ logger.debug('Commit Date:  ' + githubCommitsData.commit.committer.date);
+
+ const now = new Date();
+ const newDate = new Date(now.toISOString().split('.')[0]+'Z');
+ //alert( now.toISOString().slice(0,-5)+"Z");
+
+
+ msgJSON.repos[0].tagFile = {'name': msgJSON.repos[0].repo, 'githubBranch': msgJSON.repos[0].branch, 'githubRepositoryUrl': `https://github.com/${msgJSON.repos[0].username}/${msgJSON.repos[0].repo}`, 'installType':'Github Commit', 'installDateTime': newDate, 'commitHash':githubCommitsData.sha};
+
+ const getaAdDeployTagCmds = getaddDeployTagCommands(msgJSON);
+ logger.warn(`Running addDeployTag.addInstallTag`);
+
+ for (const command of getaAdDeployTagCmds) {
+     try {
+         // eslint-disable-next-line no-await-in-loop
+         const gitAddTagResult = await execProm(command, { cwd: 'tmp' });
+         logger.debug(`deployQueueCheck: ${gitAddTagResult.stderr}`);
+         cds.commandResults.push({
+             command,
+             raw: gitAddTagResult.stderr
+         });
+     } catch (err) {
+         logger.warn(`deployQueueCheck: couldn't copy Install Tag--${command}`);
+         cds.errors.push({
+             command,
+             error: err.stderr,
+             raw: err
+         });
+         cds.complete = true;
+     }
+ }
+ 
+    return cds;
+    };
 
 const prepOrgInit = async (msgJSON: DeployRequest): Promise<void> => {
     const orgInitPath = `tmp/${msgJSON.deployId}/orgInit.sh`;
