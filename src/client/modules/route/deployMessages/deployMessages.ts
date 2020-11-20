@@ -58,7 +58,7 @@ export default class DeployMessages extends LightningElement {
   }
 
   get showDelete() {
-    return this.results && !this.results.isByoo;
+    return this.results && (!this.results.isByoo && !this.results.isQuickDeploy);
   }
 
   @wire(resultsPoll, { deployId: '$deployId' })
