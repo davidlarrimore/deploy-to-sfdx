@@ -7,9 +7,9 @@ import { cdsPublish, putHerokuCDS } from './redisNormal';
 import { lineRunner } from './lines';
 import { timesToGA } from './timeTracking';
 // import { poolParse } from './poolParse';
-import { getCloneCommands, isByoo, isQuickDeploy, addInstallTag } from './namedUtilities';
+import { getCloneCommands, isByoo, isQuickDeploy  } from './namedUtilities';
 import { CDS } from './CDS';
-import { prepOrgInit, prepProjectScratchDef, prepareRepo } from './prepLocalRepo';
+import { prepOrgInit, prepProjectScratchDef, prepareRepo, addInstallTag } from './prepLocalRepo';
 
 const build = async (msgJSON: DeployRequest): Promise<CDS> => {
     let clientResult = new CDS({
