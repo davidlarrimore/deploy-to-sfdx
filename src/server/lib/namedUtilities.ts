@@ -58,8 +58,11 @@ const getaddDeployTagCommands = (depReq: DeployRequest): string[] => {
         const tagFilePrefix = 'XTAG';
         let repoName = depReq.repos[0].repo;
         repoName = repoName.replace(/-/g,'');
-        const tagFileName = `${tagFilePrefix}_${depReq.repos[0].username}_${repoName}.json`;
-        const tagFileMetaName = `${tagFilePrefix}_${depReq.repos[0].username}_${repoName}.resource-meta.xml`;
+        let githubUserName = depReq.repos[0].username;
+        githubUserName = githubUserName.replace(/-/g,'');
+
+        const tagFileName = `${tagFilePrefix}_${githubUserName}_${repoName}.json`;
+        const tagFileMetaName = `${tagFilePrefix}_${githubUserName}_${repoName}.resource-meta.xml`;
 
         return [
             `mkdir -p ${tagFiledirectory}`,
