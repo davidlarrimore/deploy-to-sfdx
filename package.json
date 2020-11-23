@@ -43,6 +43,7 @@
         "@salesforce-ux/design-system": "^2.9.3",
         "@salesforce/analytics": "0.17.0",
         "@salesforce/kit": "^1.1.1",
+        "axios": "^0.21.0",
         "cors": "^2.8.5",
         "deepmerge": "^4.2.2",
         "express": "^4.16.4",
