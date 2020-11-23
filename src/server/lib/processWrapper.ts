@@ -15,6 +15,13 @@ const processWrapper = {
     BYOO_CONSUMERKEY: process.env.BYOO_CONSUMERKEY,
     BYOO_CALLBACK_URI: process.env.BYOO_CALLBACK_URI,
 
+
+    // quickDeploy hub credentials
+    QUICKDEPLOY_SECRET: process.env.QUICKDEPLOY_SECRET,
+    QUICKDEPLOY_CONSUMERKEY: process.env.QUICKDEPLOY_CONSUMERKEY,
+    QUICKDEPLOY_CALLBACK_URI: process.env.QUICKDEPLOY_CALLBACK_URI,
+
+
     // poolDrain credentials
     PD_KEY: process.env.LOCAL_ONLY_KEY_PATH
         ? fs.readFileSync(process.env.LOCAL_ONLY_KEY_PATH)

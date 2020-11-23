@@ -3,45 +3,138 @@ import { multiTemplateURLBuilder } from '../../../../server/lib/multiTemplateURL
 
 export default class QuickDeploy extends LightningElement {
   @api template;
+  @api quickdeploy;
 
-  @track salesforceAuthUrl;
+  @api instanceUrl;
+  @api accessToken;
 
-  @track isSandbox = false;
-    
+  @api state;
+  @api sandbox;
+  @api packageversionid;
+  @api userId;
+  @api orgId;
+
+  @track installButtonUrl;
+  @track preAuthURL;
+
+  @track packageInfo;
+
   get scratchUrl() {
     return window.location.href.replace('quickDeploy', 'launch');
   }
 
   async connectedCallback() {
-    const authURL = multiTemplateURLBuilder(this.template, '/authURL');
-    // console.log(authURL);
+    console.log(`Running connectedCallback`);
+    //First thing we do is Authorize
+    if(!this.accessToken){
+      let preAuthURLTemplate = this.preAuthMultiTemplateURLBuilder(this.template, '/preAuth');
+      this.preAuthURL = await (await fetch(preAuthURLTemplate)).text();
 
-    let thisURL = window.location.href;
-    let parameterArray = new URL(thisURL).searchParams;
-    
-    if(null !== parameterArray.get('sandbox')){
-      this.salesforceAuthUrl = await (await fetch(`${authURL}&base_url=https://test.salesforce.com`)).text();
-      this.isSandbox = true;
+      if(this.sandbox && this.sandbox === 'true'){
+        this.preAuthURL = await (await fetch(`${preAuthURLTemplate}&base_url=https://test.salesforce.com`)).text();
+      }
+      window.location.href = this.preAuthURL;
+      //this.installButtonUrl = this.preAuthURL;
+
     }else{
-      this.salesforceAuthUrl = await (await fetch(authURL)).text();
+      const authURL = multiTemplateURLBuilder(this.template, '/authURL');
+      
+      if(this.sandbox && this.sandbox === 'true'){
+        this.installButtonUrl = await (await fetch(`${authURL}&base_url=https://test.salesforce.com`)).text();
+      }else{
+        this.installButtonUrl = await (await fetch(authURL)).text();
+      }
+  
+      if(!this.quickdeploy){
+        //window.location.href = await (await fetch(authURL)).text();
+      }
     }
 
-    if(null !== parameterArray.get('quickdeploy')){
-        window.location.href = this.salesforceAuthUrl;
-    }
+
   }
 
-  get getParameter() {
-    // if you have Dynamic URL Use (window.location.href)
-    var testURL = window.location.href;
-    var newURL = new URL(testURL).searchParams;
-    console.log('Template ===> '+newURL.get('template'));
-    //console.log('image ====> '+newURL.get('image'));
-    return newURL.get('template');
+  get isSandboxFlag(){
+    if (this.sandbox && this.sandbox === 'true'){
+      return true;
+    }
+    return false;
+  }
+
+  get isSandbox(){
+    if(this.sandbox && this.sandbox === 'true'){
+      return 'Yes';
+    }
+    return 'No';
+  }
+
+  
+
+  get isSourceInstallFlag(){
+    if(this.accessToken){
+      if (this.template){
+        return true;
+      }
+    }
+    return false; 
+  }
+
+  get isPackageInstallFlag(){
+    if(this.accessToken){
+      if (this.packageversionid){
+        return true;
+      }
+    }
+    return false; 
+  }
+
+  get installType(){
+    if (this.isSourceInstallFlag){
+      return 'Source(Github)';
+    }
+    return 'Salesforce Package';
+  }
+
+  get canInstallFlag(){
+    if (this.isPackageInstallFlag || this.isSourceInstallFlag){
+      return true;
+    }
+    return false;
   }
 
   get templateArray() {
-    // console.log(this.template);
-    return Array.isArray(this.template) ? this.template : [this.template];
+    //console.log(this.template);
+    if(this.accessToken){
+      return Array.isArray(this.template) ? this.template : [this.template];
+    }
+    return '';
   }
+
+  get packageArray() {
+    //console.log(this.packageversionid);
+    if(this.accessToken){
+      return Array.isArray(this.packageversionid) ? this.packageversionid : [this.packageversionid];
+    }
+    return '';
+  }
+
+
+  preAuthMultiTemplateURLBuilder(templatesURLs: string[] | string, preQueryURL = ''){
+    let baseURL = '';
+    if (Array.isArray(templatesURLs)) {
+      baseURL += `${preQueryURL}?template=${templatesURLs.join('&template=')}`;
+    }else{
+      baseURL += `${preQueryURL}?template=${templatesURLs}`;
+    }
+
+    if (this.sandbox && this.sandbox === 'true'){
+      baseURL += `&sandbox=true`;
+    }
+
+    if(this.quickdeploy && this.quickdeploy === 'true'){
+      baseURL += `&quickdeploy=true`;
+    }
+
+    return baseURL;
+};
+
 }

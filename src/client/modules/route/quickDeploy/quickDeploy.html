@@ -1,36 +1,63 @@
 <template>
-  <base-card style="margin-bottom:10px;font-size:90%;">
-    <h2>Welcome to the QuickDeployer</h2>
-    <p>The QuickDeployer was designed to work along side the <a href="https://github.com/davidlarrimore/ComponentPackageManagerClient" target="_blank">Component Package Manager Client</a>. It allows for leveraging certain URL parameters to more quickly deploy code/packages to your org. URL Parameters:</p>
-    <ul>
-      <li><strong>template</strong>: URL To Github Repository</li>
-      <li><strong>sandbox</strong>: Target org is a sandbox/scratch org and therefore we will need to use a seperate auth url.</li>        
-      <li><strong>quickdeploy</strong>: Skip this screen entirely and go straight to install...</li>     
-    </ul>
-  </base-card>
-  <base-card>
-    <template if:true={template}>     
-      <p>You are about to install the following Repositories to your Salesforce Org:</p>
+  <template if:true={accessToken}>
+    <base-card style="margin-bottom:10px;font-size:90%;">
+      <h2>Welcome to the QuickDeployer</h2>
+      <p>The QuickDeployer was designed to work along side the <a href="https://github.com/davidlarrimore/ComponentPackageManagerClient" target="_blank">Component Package Manager Client</a>. It allows for leveraging certain URL parameters to more quickly deploy code/packages to your org. URL Parameters:</p>
       <ul>
-        <template iterator:it={templateArray}>
-          <li key={it.value} if:false={it.last}><a href={it.value} target="_blank">{it.value}</a> and&nbsp;</li>
-          <li key={it.value} if:true={it.last}><a href={it.value} target="_blank">{it.value}</a></li>
-        </template>
+        <li><strong>template</strong>: URL To Github Repository. OR</li>
+        <li><strong>packageversionid</strong>: Salesforce Package Version ID (Starts with a '04t')</li>
+        <li><strong>sandbox</strong>: Target org is a sandbox/scratch org and therefore we will need to use a seperate auth url.</li>        
+        <li><strong>quickdeploy</strong>: Skip this screen entirely and go straight to install...</li>     
       </ul>
-      <p>
-        This is going to install Metadata, run scripts, and generally make changes to an org. <b>Make sure that you're signing in to the right org!</b>
-      </p>
-      <hr/>
-      <p style="text-align:center;">
-        <base-button url={salesforceAuthUrl} target="_self" variant="neutral" label="Deploy to Salesforce Org"></base-button>
-      </p>
-    </template>
-    <template if:false={template}>
-      <base-illustration
-        variant="WalkthroughNotAvailable"
-        size="large"
-        heading="You need to include a template parameter in the url, which points to an accessible github repo url."
-      ></base-illustration>
-    </template>
-  </base-card>
+    </base-card>
+    <base-card>
+      <template if:true={canInstallFlag}> 
+        <h3>Installation Info</h3>
+        <p>
+          <strong>Instance URL</strong>: {instanceUrl}</br>
+          <strong>Org Id</strong>: {orgId}</br>
+          <strong>User Id</strong>: {userId}</br>
+          <strong>Sandbox</strong>: {isSandbox}</br>
+          <strong>Install Type</strong>: {installType}</br>
+          <strong>Component Package(s) to be Installed</strong>:
+        <template if:true={isSourceInstallFlag}>
+          <ul>
+            <template iterator:it={templateArray}>
+              <li key={it.value} if:false={it.last}><a href={it.value} target="_blank">{it.value}</a> (via SFDX) and&nbsp;</li>
+              <li key={it.value} if:true={it.last}><a href={it.value} target="_blank">{it.value} (via SFDX)</a></li>
+            </template>
+          </ul>
+        </template>
+        <template if:true={isPackageInstallFlag}>
+          <ul>
+            <template iterator:it={packageArray}>
+              <li key={it.value} if:false={it.last}>{it.value} (via SFDX) and&nbsp;</li>
+              <li key={it.value} if:true={it.last}>{it.value} (via SFDX)</li>
+            </template>
+          </ul>        
+        </template> 
+        </p>     
+        <p>
+          This is going to install Metadata, run scripts, and generally make changes to an org. <b>Make sure that you're signed into to the correct</b>
+        </p>
+        <hr/>
+        <p style="text-align:center;">
+          <base-button url={installButtonUrl} target="_self" variant="neutral" label="Deploy to Salesforce Org"></base-button>
+        </p>
+      </template>
+      <template if:false={canInstallFlag}>
+        <base-illustration
+          variant="WalkthroughNotAvailable"
+          size="large"
+          heading="You either need to provide a Github URL (template) or Salesforce Package Version ID (packageversionid) parameter to install a package"
+        ></base-illustration>
+      </template>
+    </base-card>  
+  </template>
+  <template if:false={accessToken}>
+    <base-card style="margin-bottom:10px;font-size:90%;">
+      <p>Please wait while we authorize with your Salesforce Org</p>
+      <p>If you are not automatically forwarded, please click <a href={preAuthURL} target="_self">HERE</a>.</p>
+    </base-card>
+  </template>
 </template>

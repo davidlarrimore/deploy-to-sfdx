@@ -106,11 +106,11 @@ app.get(['/byoo'], (req, res, next) => {
 });
 
 app.get(['/quickDeploy'], (req, res, next) => {
-    if (processWrapper.BYOO_CALLBACK_URI && processWrapper.BYOO_CONSUMERKEY && processWrapper.BYOO_SECRET) {
+    if (processWrapper.QUICKDEPLOY_CALLBACK_URI && processWrapper.QUICKDEPLOY_CONSUMERKEY && processWrapper.QUICKDEPLOY_SECRET) {
         res.sendFile('index.html', { root: path.join(__dirname, '../../../dist') });
     } else {
         setImmediate(() => {
-            next(new Error('Connected app credentials not properly configured for Bring Your Own Org feature'));
+            next(new Error('Connected app credentials not properly configured for QuickDeploy'));
         });
     }
 });
@@ -166,6 +166,26 @@ app.get(
     })
 );
 
+
+app.get(
+    '/preAuth',
+    wrapAsync(async (req, res, next) => {
+        const byooOauth2 = new jsforce.OAuth2({
+            redirectUri: processWrapper.QUICKDEPLOY_CALLBACK_URI ?? `http://localhost:${port}/preAuthToken` ,
+            clientId: processWrapper.QUICKDEPLOY_CONSUMERKEY,
+            clientSecret: processWrapper.QUICKDEPLOY_SECRET,
+            loginUrl: req.query.base_url
+        });
+        // console.log('state will be', JSON.stringify(req.query));
+        res.send(
+            byooOauth2.getAuthorizationUrl({
+                scope: 'api id web openid refresh_token',
+                state: JSON.stringify(req.query)
+            })
+        );
+    })
+);
+
 app.get(
     '/token',
     wrapAsync(async (req, res, next) => {
@@ -198,6 +218,37 @@ app.get(
         return res.redirect(`/#deploying/deployer/${message.deployId.trim()}`);
     })
 );
+
+app.get(
+    '/preAuthToken',
+    wrapAsync(async (req, res, next) => {
+        const state = JSON.parse(req.query.state);
+        // console.log(`state`, state);
+        const byooOauth2 = new jsforce.OAuth2({
+            redirectUri: processWrapper.BYOO_CALLBACK_URI ?? `http://localhost:${port}/preAuthToken`,
+            clientId: processWrapper.BYOO_CONSUMERKEY,
+            clientSecret: processWrapper.BYOO_SECRET,
+            loginUrl: state.base_url
+        });
+        const conn = new jsforce.Connection({ oauth2: byooOauth2 });
+        const userInfo = await conn.authorize(req.query.code);
+
+        let str = '';
+        for (const key in state) {
+            if (str !== '') {
+                str += '&';
+            }
+            str += key + '=' + state[key];
+        }
+        str += `&userId=${userInfo.id}`;
+        str += `&orgId=${userInfo.organizationId}`;
+        str += `&accessToken=${conn.accessToken}`;
+        str += `&instanceUrl=${conn.instanceUrl}`;
+        
+        return res.redirect(`/quickDeploy?${str}`);
+    })
+);
+
 
 app.get('*', (req, res, next) => {
     setImmediate(() => {

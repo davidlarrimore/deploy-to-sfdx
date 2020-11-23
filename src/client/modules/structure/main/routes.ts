@@ -69,7 +69,15 @@ const routeTable = [
   {
     name: 'quickDeploy',
     component: QuickDeploy,
-    queryMap: [{ query: 'template', prop: 'template' }],
+    queryMap: [{ query: 'template', prop: 'template' },
+               { query: 'packageversionid', prop: 'packageversionid' },
+               { query: 'sandbox', prop: 'sandbox' },
+               { query: 'quickdeploy', prop: 'quickdeploy' },  
+               { query: 'userId', prop: 'userId' },       
+               { query: 'orgId', prop: 'orgId' },                   
+               { query: 'instanceUrl', prop: 'instanceUrl'},                              
+               { query: 'accessToken', prop: 'accessToken' }, 
+              ],
   },  
 ];
 
