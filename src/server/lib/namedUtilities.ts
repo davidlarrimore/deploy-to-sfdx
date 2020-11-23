@@ -68,11 +68,6 @@ const getaddDeployTagCommands = (depReq: DeployRequest): string[] => {
         ];
     }
     
-    //TODO FIX this
-    //return depReq.repos.map(
-    //    (repo) => `git clone -b ${repo.branch ?? 'master'} --single-branch https://github.com/${repo.username}/${repo.repo}.git ${depReq.deployId}/${repo.repo}`
-    //);
-
     return null;
 
 };

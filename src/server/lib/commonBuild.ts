@@ -33,7 +33,7 @@ const build = async (msgJSON: DeployRequest): Promise<CDS> => {
     }
 
     // Added for QuickDeploy...Adds InstallTag
-    if (isQuickDeploy){
+    if (isByoo){
         clientResult = await addInstallTag(msgJSON, clientResult);
         await cdsPublish(clientResult);
         if (clientResult.errors.length > 0) {
